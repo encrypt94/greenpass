@@ -291,8 +291,9 @@ class GreenPassParser(object):
         }
 
         self.certificate_info = []
-        for el in personal_data["v"]:
-            cert = {
+        ## vaccine 
+        if 'v' in personal_data:
+            self.certificate_info += list(map(lambda el: {
                 "Certificate ID":         el["ci"],
                 "Dose number":            int(el["dn"]),
                 "Total doses":            int(el["sd"]),
@@ -302,9 +303,31 @@ class GreenPassParser(object):
                 "Vaccination Date":       el["dt"],
                 "Vaccination Country":    el["co"],
                 "Target disease":         el["tg"],
-            }
-            self.certificate_info.append(cert)
+            }, personal_data['v']))
 
+        ## tests
+        if 't' in personal_data:
+            self.certificate_info += list(map(lambda el: {
+                "Certificate ID":         el["ci"],
+                "Type of the test":       el["tt"],
+                "Test Manufacturer":      el["ma"],                    
+                "Testing centre":         el["tc"],
+                "Test Result":            el["tr"],
+                "Test Date":              el["sc"],
+                "Test Country":           el["co"],
+                "Target disease":         el["tg"],
+            }, personal_data['t']))
+        ## recovery
+        if 'r' in personal_data:
+            self.certificate_info += list(map(lambda el: {
+                "Certificate ID":          el["ci"],
+                "Certificate valid until": el["df"],
+                "Certificate valid from":  el["du"],
+                "Test Country":            el["co"],
+                "Date of first positive":  el["fr"],
+                "Target disease":          el["tg"],
+            }, personal_data['r']))
+            
     # Get Key ID from the QRCode
     def get_kid(self):
         return self.kid
